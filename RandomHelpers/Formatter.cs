@@ -10,7 +10,7 @@ namespace RandomHelpers
         public static string FormatUnit(double value, string unit, double multiplier = 1000)
         {
             int prefixIndex = 0;
-            while ((Math.Abs(value) > multiplier) && (prefixIndex < (prefixCollection.Count - 1)))
+            while ((Math.Abs(value) >= multiplier) && (prefixIndex < (prefixCollection.Count - 1)))
             {
                 value /= multiplier;
                 prefixIndex += 1;

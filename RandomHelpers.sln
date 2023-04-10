@@ -5,6 +5,8 @@ VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RandomHelpers", "RandomHelpers\RandomHelpers.csproj", "{C8270407-C0D3-49A6-BE2A-74E42CDE8F40}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RandomHelpers.Tests", "RandomHelpers.Tests\RandomHelpers.Tests.csproj", "{4C0CEE18-604C-48CD-B533-BF81C8C6340F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{C8270407-C0D3-49A6-BE2A-74E42CDE8F40}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8270407-C0D3-49A6-BE2A-74E42CDE8F40}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8270407-C0D3-49A6-BE2A-74E42CDE8F40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C0CEE18-604C-48CD-B533-BF81C8C6340F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C0CEE18-604C-48CD-B533-BF81C8C6340F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C0CEE18-604C-48CD-B533-BF81C8C6340F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C0CEE18-604C-48CD-B533-BF81C8C6340F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
