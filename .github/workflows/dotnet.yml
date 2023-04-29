@@ -11,6 +11,9 @@ on:
 
 jobs:
   build:
+    env:
+      BUILD_CONFIG: 'Release'
+      SOLUTION: 'RandomHelpers.sln'
 
     runs-on: ubuntu-latest
 
@@ -21,8 +24,15 @@ jobs:
       with:
         dotnet-version: 7.0.x
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore $SOLUTION
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore $SOLUTION --configuration $BUILD_CONFIG
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-build $SOLUTION --configuration $BUILD_CONFIG --verbosity normal
+
+    - name: Pack
+      if: github.ref == 'refs/heads/main'
+      run: dotnet pack --no-build --no-restore --verbosity normal $SOLUTION --configuration $BUILD_CONFIG
+    - name: Publish to Github
+      if: github.ref == 'refs/heads/main'
+      run: dotnet nuget push **/${BUILD_CONFIG}/*.nupkg --source https://nuget.pkg.github.com/tdesveaux/index.json --api-key ${{secrets.NUGET_API_KEY}}
