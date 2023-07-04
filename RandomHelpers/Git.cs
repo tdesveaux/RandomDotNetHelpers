@@ -6,14 +6,14 @@ namespace RandomHelpers
     {
         private static readonly NLog.Logger logger = LogManager.GetLogger(nameof(RandomHelpers.Git));
 
-        private static readonly string GitExe = "git.exe";
+        private static readonly string GitBin = "git";
 
         public class GitTempRepository : IDisposable
         {
             public readonly string URL;
             public readonly string LocalPath;
 
-            public IEnumerable<string> GitCommand(IEnumerable<string> args) => new string[] { GitExe, "-C", LocalPath }.Concat(args);
+            public IEnumerable<string> GitCommand(IEnumerable<string> args) => new string[] { GitBin, "-C", LocalPath }.Concat(args);
 
             public GitTempRepository(string URL)
             {
@@ -25,7 +25,7 @@ namespace RandomHelpers
             public async Task Initialize(CancellationToken cancellation = default)
             {
                 await Command.Run(new string[] {
-                    GitExe,
+                    GitBin,
                     "clone",
                     "--bare",
                     "--quiet",
