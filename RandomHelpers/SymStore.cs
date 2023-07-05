@@ -1,7 +1,7 @@
-﻿using NLog;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.Logging;
 using static RandomHelpers.SymStore.RefPointer;
 using static RandomHelpers.SymStore.TransactionDetail;
 
@@ -9,7 +9,7 @@ namespace RandomHelpers
 {
     public static class SymStore
     {
-        private static readonly NLog.Logger logger = LogManager.GetLogger(nameof(SymStore));
+        public static ILogger? Logger { private get; set; } = null;
 
         // CAB Compressiond does not handle files larger than this
         public static readonly double CABSizeLimit = 1.5 * 1000 * 1000 * 1000;
@@ -134,7 +134,7 @@ namespace RandomHelpers
                 Match match = lineRegex.Match(line);
                 if (!match.Success)
                 {
-                    logger.Error($"Line does not match regex: {line}");
+                    Logger?.LogError("Line does not match regex: {0}", line);
                     return null;
                 }
 
@@ -161,13 +161,13 @@ namespace RandomHelpers
 
         public static async Task<List<Transaction>> LoadServer(string symSrvPath)
         {
-            using var nlogScopeContext = ScopeContext.PushNestedState("LoadServer");
+            using var logScope = Logger?.BeginScope("LoadServer");
             return await LoadTransactions(Path.Combine(symSrvPath, MetadataFolderName, ServerFileName), Transaction.FromLine);
         }
 
         public static async Task<List<Transaction>> LoadHistory(string symSrvPath)
         {
-            using var nlogScopeContext = ScopeContext.PushNestedState("LoadHistory");
+            using var logScope = Logger?.BeginScope("LoadHistory");
             return await LoadTransactions(Path.Combine(symSrvPath, MetadataFolderName, HistoryFileName), Transaction.FromLine);
         }
 
@@ -191,7 +191,7 @@ namespace RandomHelpers
                     Match match = lineRegex.Match(line);
                     if (!match.Success)
                     {
-                        logger.Error($"Line does not match regex: {line}");
+                        Logger?.LogError("Line does not match regex: {0}", line);
                         return null;
                     }
 
@@ -218,7 +218,7 @@ namespace RandomHelpers
 
         public static async Task<List<TransactionDetail>> LoadTransactionDetails(string symSrvPath)
         {
-            using var nlogScopeContext = ScopeContext.PushNestedState("LoadTransactionDetails");
+            using var logScope = Logger?.BeginScope("LoadTransactionDetails");
 
             DirectoryInfo metadataDirectory = new(Path.Combine(symSrvPath, MetadataFolderName));
             Regex transactionFileNameRegex = new(@"^\d{10}$");
@@ -227,7 +227,7 @@ namespace RandomHelpers
 
             foreach (var file in metadataDirectory.EnumerateFiles().Where(f => transactionFileNameRegex.IsMatch(f.Name)))
             {
-                logger.Debug($"Found transaction file {file.FullName}");
+                Logger?.LogDebug("Found transaction file {0}", file.FullName);
                 transactions.Add(new(uint.Parse(file.Name))
                 {
                     artifactDetails = await Task.Run(() => LoadTransactions(file.FullName, ArtifactDetails.FromLine))
@@ -267,7 +267,7 @@ namespace RandomHelpers
                     Match match = lineRegex.Match(line);
                     if (!match.Success)
                     {
-                        logger.Error($"Line does not match regex: {line}");
+                        Logger?.LogError("Line does not match regex: {0}", line);
                         return null;
                     }
 
@@ -318,23 +318,23 @@ namespace RandomHelpers
 
         public static async Task<List<RefPointer>> LoadRefPointers(string symSrvPath)
         {
-            using var nlogScopeContext = ScopeContext.PushNestedState("LoadRefPointers");
+            using var logScope = Logger?.BeginScope("LoadRefPointers");
 
             DirectoryInfo symSrvDirectory = new(symSrvPath);
             List<RefPointer> refPointers = new();
 
-            logger.Info($"Search for refPtr files");
+            Logger?.LogInformation("Search for refPtr files");
             var refPtrFiles = symSrvDirectory
                 .EnumerateDirectories("*", SearchOption.TopDirectoryOnly)
                 .Where(d => d.Name != MetadataFolderName) // Skip Metadata folder
                 .Select(d => d.EnumerateFiles(RefFileName, SearchOption.AllDirectories))
                 .SelectMany(f => f)
                 .ToList();
-            logger.Info($"Found {refPtrFiles.Count} refPtr files");
+            Logger?.LogInformation("Found {0} refPtr files", refPtrFiles.Count);
 
             foreach (var refPtrFile in refPtrFiles)
             {
-                logger.Debug($"Found refPtr {refPtrFile.FullName}");
+                Logger?.LogDebug("Found refPtr {0}", refPtrFile.FullName);
                 refPointers.Add(new(Path.GetRelativePath(symSrvDirectory.FullName, refPtrFile.FullName))
                 {
                     Entries = await Task.Run(() => LoadTransactions(refPtrFile.FullName, RefPointerEntry.FromLine))
@@ -348,7 +348,7 @@ namespace RandomHelpers
         {
             if (!File.Exists(filepath))
             {
-                logger.Error($"transaction holder {filepath} does no exists");
+                Logger?.LogError("transaction holder {0} does no exists", filepath);
                 throw new FileNotFoundException();
             }
 

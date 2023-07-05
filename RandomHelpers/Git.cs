@@ -1,11 +1,9 @@
-using NLog;
+using Microsoft.Extensions.Logging;
 
 namespace RandomHelpers
 {
     public static class Git
     {
-        private static readonly NLog.Logger logger = LogManager.GetLogger(nameof(RandomHelpers.Git));
-
         private static readonly string GitBin = "git";
 
         public class GitTempRepository : IDisposable
@@ -13,13 +11,16 @@ namespace RandomHelpers
             public readonly string URL;
             public readonly string LocalPath;
 
+            private readonly ILogger<GitTempRepository>? _logger;
+
             public IEnumerable<string> GitCommand(IEnumerable<string> args) => new string[] { GitBin, "-C", LocalPath }.Concat(args);
 
-            public GitTempRepository(string URL)
+            public GitTempRepository(string URL, ILogger<GitTempRepository>? logger = null)
             {
                 this.URL = URL;
                 LocalPath = Path.Combine(Path.GetTempPath(), Path.GetFileName(URL));
-                logger.Info("Will use local repo {} for {}", LocalPath, URL);
+                _logger = logger;
+                _logger?.LogInformation("Will use local repo {0} for {1}", LocalPath, URL);
             }
 
             public async Task Initialize(CancellationToken cancellation = default)
@@ -57,7 +58,7 @@ namespace RandomHelpers
             {
                 if (Path.Exists(LocalPath))
                 {
-                    logger.Info("Cleanup temp Git bare repo at {}", LocalPath);
+                    _logger?.LogInformation("Cleanup temp Git bare repo at {0}", LocalPath);
                     var dirInfo = new DirectoryInfo(LocalPath);
                     try
                     {

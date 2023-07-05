@@ -1,14 +1,11 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using NLog;
 
 namespace RandomHelpers
 {
     public static class P4
     {
-        private static readonly NLog.Logger logger = LogManager.GetLogger(nameof(RandomHelpers.P4));
-
         public static IEnumerable<string> P4Command(IEnumerable<string> args) => new string[] { "p4", "-ztag", "-Mj" }.Concat(args);
 
         public static DateTime P4TimeToDateTime(UInt64 time) => DateTime.UnixEpoch.AddSeconds(time).ToLocalTime();

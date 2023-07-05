@@ -1,13 +1,12 @@
 using System.Diagnostics;
 using System.Text;
-using NLog;
+using Microsoft.Extensions.Logging;
 
 namespace RandomHelpers
 {
     public static class Command
     {
-        private static readonly NLog.Logger logger = LogManager.GetLogger(nameof(RandomHelpers.Command));
-
+        public static ILogger? Logger { private get; set; } = null;
         /// <returns>
         /// A tuple of process return code and process StdOut lines
         /// </returns>
@@ -60,7 +59,7 @@ namespace RandomHelpers
                 startInfo.ArgumentList.Add(arg);
             }
 
-            logger.Info("Command {} {}", startInfo.FileName, startInfo.ArgumentList);
+            Logger?.LogInformation("Command {0} {1}", startInfo.FileName, startInfo.ArgumentList);
 
             return Process.Start(startInfo) ?? throw new NullReferenceException(nameof(Process));
         }
