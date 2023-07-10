@@ -8,7 +8,7 @@ namespace RandomHelpers
     {
         public static IEnumerable<string> P4Command(IEnumerable<string> args) => new string[] { "p4", "-ztag", "-Mj" }.Concat(args);
 
-        public static DateTime P4TimeToDateTime(UInt64 time) => DateTime.UnixEpoch.AddSeconds(time).ToLocalTime();
+        public static DateTime P4TimeToDateTime(UInt64 time) => DateTime.UnixEpoch.AddSeconds(time);
 
         public static string DateTimeToP4RevSpec(DateTime dt) => DateTimeToP4RevSpec(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second);
         public static string DateTimeToP4RevSpec(int year, int? month, int? day, int? hour, int? minute, int? second)
