@@ -15,23 +15,23 @@ namespace RandomHelpers
         {
             StringBuilder builder = new();
 
-            builder.Append(year);
+            builder.Append($"{year:D4}");
             // Bit convoluted but all values are optionals in P4 Specs
             if (month != null)
             {
-                builder.Append("/").Append(month);
+                builder.Append("/").Append($"{month:D2}");
                 if (day != null)
                 {
-                    builder.Append("/").Append(day);
+                    builder.Append("/").Append($"{day:D2}");
                     if (hour != null)
                     {
-                        builder.Append(":").Append(hour);
+                        builder.Append(":").Append($"{hour:D2}");
                         if (minute != null)
                         {
-                            builder.Append(":").Append(minute);
+                            builder.Append(":").Append($"{minute:D2}");
                             if (second != null)
                             {
-                                builder.Append(":").Append(second);
+                                builder.Append(":").Append($"{second:D2}");
                             }
                         }
                     }
